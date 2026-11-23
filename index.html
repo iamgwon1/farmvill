@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover">
+<title>팜빌 재배기록</title>
+<meta name="theme-color" content="#1E4029">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="팜빌">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icon-192.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<style>
+  html, body { margin: 0; height: 100%; background: #1E4029; overflow: hidden; }
+  body { padding-top: env(safe-area-inset-top); box-sizing: border-box; }
+  #app { display: block; width: 100%; height: 100%; border: 0; background: #F5F4EE; }
+  #splash { position: fixed; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 18px;
+    background: #1E4029; color: #dfe9e1; font: 15px -apple-system, "Apple SD Gothic Neo", "Noto Sans KR", sans-serif; transition: opacity .3s; }
+  #splash img { width: 168px; height: 168px; border-radius: 36px; }
+  #splash.hide { opacity: 0; pointer-events: none; }
+  #off { display: none; position: fixed; left: 50%; bottom: 24px; transform: translateX(-50%); background: #222; color: #fff; padding: 10px 16px; border-radius: 20px; font: 14px sans-serif; z-index: 9; }
+</style>
+</head>
+<body>
+<iframe id="app" title="팜빌 재배기록" allow="camera; microphone; geolocation; clipboard-read; clipboard-write; fullscreen"></iframe>
+<div id="splash"><img src="icon-512.png" alt="FARMVILL"><span id="msg">불러오는 중…</span></div>
+<div id="off">인터넷 연결이 없어요. 연결되면 다시 열어 주세요</div>
+<script>
+  // 팜빌 재배기록 앱(구글 Apps Script)을 화면 전체로 띄우는 껍데기 페이지
+  // ?view=pc 를 붙이면 PC 대시보드
+  var APP = 'https://script.google.com/macros/s/AKfycbyirs_RKWAgakUkGW2oDUusw1xEcPMt6L1vpOrOjyPu5Hpv4OibYIj18wCfR8zja5S2Bw/exec';
+  var q = new URLSearchParams(location.search), view = q.get('view');
+  if (view === 'pc') { document.title = '팜빌 농장 대시보드'; document.body.style.paddingTop = '0'; }
+  var f = document.getElementById('app');
+  f.src = APP + (view ? '?view=' + encodeURIComponent(view) : '');
+  f.addEventListener('load', function () { setTimeout(function () { document.getElementById('splash').classList.add('hide'); }, 300); });
+  setTimeout(function () { document.getElementById('msg').textContent = '조금만 기다려 주세요…'; }, 6000);
+  setTimeout(function () { document.getElementById('splash').classList.add('hide'); }, 15000);
+  function net() { document.getElementById('off').style.display = navigator.onLine ? 'none' : 'block'; }
+  addEventListener('online', net); addEventListener('offline', net); net();
+  if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js').catch(function () {});
+</script>
+</body>
+</html>
